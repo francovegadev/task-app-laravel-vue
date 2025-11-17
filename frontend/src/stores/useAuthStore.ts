@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import router from '@/router';
-import { apiGetUser, apiLogin, apiLogout, apiRegister } from '@/server/auth';
+import { apiGetDashboard, apiGetUser, apiGetUserById, apiLogin, apiLogout, apiRegister } from '@/server/auth';
 import type { LoginFormInterface, RegisterFormInterface, UserInterface } from '@/types/auth';
 import { AxiosError } from 'axios';
 import { defineStore } from 'pinia';
@@ -75,6 +75,38 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const getUserById = async (id: number) => {
+    isLoading.value = true
+    try {
+     const res = await apiGetUserById(id) 
+     return res.data
+    } catch (error) {
+     console.error(error); 
+     if (error instanceof AxiosError && error.response?.status === 422) {
+      console.error(error.response.statusText); 
+     }
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  const getDashboardData = async () => {
+    isLoading.value = true
+    try {
+     const res = await apiGetDashboard() 
+     return res
+    } catch (error) {
+     console.error(error); 
+     if (error instanceof AxiosError && error.response?.status === 422) {
+      console.error(error.response.statusText); 
+     }
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
   const logout = async () => {
     isLoading.value = true
     try {
@@ -109,6 +141,8 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     getUser,
+    getUserById,
+    getDashboardData,
     cleanStore,
     isLoading,
     isLoggedIn,
