@@ -15,81 +15,82 @@ todo-app/
 │── backend/ # API en Laravel
 │── frontend/ # SPA en Vue 3
 └── README.md
-
+```
 ---
 
 # 🚀 Instalación Rápida
 
 ## 1️⃣ Clonar el repositorio
 
----
-
 ```bash
 git clone https://github.com/francovegadev/task-app-laravel-vue.git
 cd todo-app
-
+```
 ---
 
 ## 🛠 Instalación Backend (Laravel)
----
+
 ```bash
 cd backend
 composer install
+```
 ---
 
----
 ```bash
 cp .env.example .env
+```
 ---
 
----
 ```bash
 php artisan key:generate
+```
 ---
 
----
 ```bash
 php artisan migrate --seed
----
+```
 
-▶ Ejecutar el servidor
----
+## ▶ Ejecutar el servidor
+
 ```bash
 php artisan serve
----
+```
 
-# 💻 Instalación Frontend (Vue 3)
----
+## 💻 Instalación Frontend (Vue 3)
+
 ```bash
 cd ../frontend
 
 npm install
 
 npm run dev
----
+```
 
-# 🔐 Autenticación
----
+## 🔐 Autenticación
+
 El backend usa Laravel Sanctum, por lo que debes asegurarte de que:
-**El frontend corra en http://localhost:5173
-**El backend corra en http://localhost:8000
-**SANCTUM_STATEFUL_DOMAINS esté configurado correctamente en .env
+- **El frontend corra en http://localhost:5173**
+- **El backend corra en http://localhost:8000**
+- **SANCTUM_STATEFUL_DOMAINS esté configurado correctamente en .env**
 
 ```ini
 SANCTUM_STATEFUL_DOMAINS=localhost:5173
 SESSION_DOMAIN=localhost
+```
 
-- Este proyecto usa:
-**Laravel Sanctum**
-**Roles & Permisos (Spatie)**
----
-👤 Roles disponibles
+## 👤 Roles disponibles
 
-- **Admin** — acceso total
-- **Editor** — puede crear/editar
-- **Viewer** — solo lectura
+* **Admin** 
+  — acceso total
+  — email: admin@email.com
+  — password: admin1234
 
-📚 Scripts útiles
-🧼 Limpiar cache Laravel
+* **Editor** 
+  — puede crear/editar
+  — email: editor@email.com
+  — password: editor1234
 
-```bash
+* **Viewer** 
+  — solo lectura
+  — email: viwer@email.com
+  — password: viwer1234
