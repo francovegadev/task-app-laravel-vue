@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,14 +17,6 @@ Route::post(uri: '/login', action: 'UserController@login')->name('login');
 Route::post(uri: '/register', action: 'UserController@register')->name('register');
 Route::post(uri: '/logout', action: 'UserController@logout')->middleware('auth:sanctum')->name('logout');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json([
-        "user" => $request->user(),
-        "roles" => $request->user()->getRoleNames(),
-        "permissions" => $request->user()->getPermissionNames()
-    ]);
-});
-
 // tasks routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get(uri: '/tasks', action: 'TaskController@index')->name('tasks.index');
@@ -34,6 +27,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get(uri: '/task-status', action: 'TaskController@status')->name('tasks.status');
 });
 
-Route::middleware(['auth:sanctum', 'role:admin'])->get('/admin-area', function () {
-    return "Solo admins";
+Route::get(uri: '/dashboard', action: 'DashboardController@index')->middleware(['auth:sanctum', 'role:admin'])->name('dashboard');
+
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return response()->json([
+        "user" => $request->user(),
+        "roles" => $request->user()->getRoleNames(),
+        "permissions" => $request->user()->getPermissionNames()
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/user/{id}', function (Request $request, int $id) {
+    $user = User::find($id);
+    return response()->json([
+        "user" => $user,
+        "roles" => $request->user()->getRoleNames(),
+        "permissions" => $request->user()->getPermissionNames()
+    ]);
 });
