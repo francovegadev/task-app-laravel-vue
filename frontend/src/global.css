@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+html,
+body {
+  box-sizing: border-box;
+  font-family:
+    "Nunito Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
+}
+
+.blockquote-footer::before {
+  content: "— ";
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(85, 89, 92, 0.75);
+  content: "/";
+  padding-right: 0.5rem;
+  float: left;
+}
+
+@import "tailwindcss";
+
+@theme {
+  --color-navbarbg: rgba(248, 249, 250, 1);
+  --color-navlink-color: rgba(0, 0, 0, 0.3);
+  --color-navlink-colorH: #1a1a1a;
+  --color-inputbg: #f0f1f2;
+  --color-borderC: #e0e1e2;
+  --color-divideBar: rgba(85, 89, 92, 0.75);
+
+  --color-primary: #1a1a1a;
+  --color-secondary: #fff;
+  --color-success: #4bbf73;
+  --color-info: #1f9bcf;
+  --color-warning: #f0ad4e;
+  --color-danger: #d9534f;
+  --color-light: #f0f1f2;
+  --color-dark: #343a40;
+  --color-faded: #919aa1;
+
+  --color-primaryH: #000;
+  --color-secondaryH: #f0f1f2;
+  --color-successH: #40a262;
+  --color-infoH: #1a84b0;
+  --color-warningH: #cc9342;
+  --color-dangerH: #b84743;
+  --color-lightH: #e0e1e2;
+  --color-darkH: #52585d;
+}
