@@ -14,11 +14,11 @@ class TaskRepository
   /**
    * get a task
    * @param int $id
-   * @return Task|null
+   * @return Task
    */
- function find(int $id) : ?Task 
+ function find(int $id) :?Task 
  {
-    return Task::find($id); 
+    return Task::with('user')->find($id);
  }
 
   /**
