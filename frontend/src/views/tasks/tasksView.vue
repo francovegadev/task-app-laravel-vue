@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import ModalC from '@/components/modalC.vue';
+import ModalDeleteC from '@/components/modalDeleteC.vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTaskStore } from '@/stores/useTaskStore';
+import type { RolesInterface } from '@/types/auth';
 import type { TasksFormInterface, TasksInterface } from '@/types/tasks';
 import { computed, onMounted, reactive, ref } from 'vue';
 
@@ -11,6 +13,7 @@ const taskStore = useTaskStore()
 const isOpen = ref<boolean>(false)
 const date = `${new Date().getDay()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
 const authStore = useAuthStore()
+const rol = ref<RolesInterface>()
 
 const form = reactive<TasksFormInterface>({
     title: '',
@@ -21,6 +24,7 @@ const form = reactive<TasksFormInterface>({
 })
 
 onMounted(async () => {
+    if (authStore.user?.roles) rol.value = authStore.user.roles[0]
     await taskStore.allTasks()
     await taskStore.getTaskStatus()
 })
@@ -36,12 +40,38 @@ const crear = async (payload: TasksFormInterface) => {
 const filteredData = computed(() => {
     if (!searchValue.value) return taskStore.tasks
     const search = searchValue.value.toString().toLowerCase()
-    return taskStore.tasks?.filter((item) => 
-            Object.values(item).some((val) => 
-                val.toString().toLowerCase().includes(search)
-            )
+    return taskStore.tasks?.filter((item) =>
+        Object.values(item).some((val) =>
+            val.toString().toLowerCase().includes(search)
         )
+    )
 })
+
+// modal config
+const showModal = ref(false)
+const selectedId = ref<number | null>(null)
+
+const deleteRegister = async (id :number | null) => {
+  if (id !== null) {
+    await taskStore.deleteTask(id)
+    closeModal()
+  }
+}
+
+const openModal = (id: number) => {
+  selectedId.value = id
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const confirmDelete = async () => {
+  if (selectedId.value !== null) {
+    await deleteRegister(selectedId.value) 
+  }
+}
 
 const btnCompletedTask = () => {
     completed.value = !completed.value
@@ -60,9 +90,8 @@ const getStatusColor = (status: TasksInterface['status']) => {
 </script>
 
 <template>
-    <div v-if="!taskStore.isLoading && taskStore.tasks" class="w-full max-w-2xl mx-auto">
-        <button type="button"
-            @click.prevent="open"
+    <div v-if="!taskStore.isLoading && taskStore.tasks" class="w-full max-w-2xl mx-auto mt-6">
+        <button type="button" @click.prevent="open" v-if="rol?.name !== 'viewer'"
             class="flex w-full max-w-48 items-center ml-auto my-6 justify-center uppercase bg-info text-secondary text-center px-3 py-3 box-border border border-transparent cursor-pointer hover:bg-infoH font-medium leading-5 rounded-sm focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 448 512" class="mx-2">
                 <path fill="currentColor"
@@ -111,7 +140,15 @@ const getStatusColor = (status: TasksInterface['status']) => {
                                             d="M0 0v1200h1200V424.289l-196.875 196.875v381.961h-806.25v-806.25h381.961L775.711 0zm1030.008 15.161l-434.18 434.25L440.7 294.283L281.618 453.438L595.821 767.57l159.082-159.082l434.18-434.25l-159.082-159.081z" />
                                     </svg>
                                 </button>
-                                <router-link :to="`/task/${task.id}/edit`"
+                                <router-link :to="`/task/${task.id}`"
+                                    class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
+                                    <svg class="hover:text-indigo-600 hover:skew-1 transition-colors" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
+                                        <path fill="currentColor" fill-rule="evenodd"
+                                            d="M1.87 8.515L1.641 8l.229-.515a6.708 6.708 0 0 1 12.26 0l.228.515l-.229.515a6.708 6.708 0 0 1-12.259 0M.5 6.876l-.26.585a1.33 1.33 0 0 0 0 1.079l.26.584a8.208 8.208 0 0 0 15 0l.26-.584a1.33 1.33 0 0 0 0-1.08l-.26-.584a8.208 8.208 0 0 0-15 0M9.5 8a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M11 8a3 3 0 1 1-6 0a3 3 0 0 1 6 0"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </router-link>
+                                <router-link :to="`/task/${task.id}/edit`" v-if="rol?.name !== 'viewer'"
                                     class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         class="hover:text-infoH transition-colors hover:skew-2" viewBox="0 0 512 512">
@@ -119,7 +156,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                                             d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L368 46.1l97.9 97.9l24.4-24.4c21.9-21.9 21.9-57.3 0-79.2zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L432 177.9L334.1 80zM96 64c-53 0-96 43-96 96v256c0 53 43 96 96 96h256c53 0 96-43 96-96v-96c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32z" />
                                     </svg>
                                 </router-link>
-                                <button type="button"
+                                <button type="button" v-if="rol?.name !== 'viewer'" @click.prevent="openModal(task.id)"
                                     class="inline-flex items-center justify-center text-danger bg-transparent box-border border border-transparent cursor-pointer hover:skew-2 font-medium leading-5 rounded-sm h-9 w-9 focus:outline-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 22 22">
                                         <path fill="currentColor"
@@ -138,6 +175,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
             </div>
         </div>
         <div class="flex w-full gap-4">
+            <ModalDeleteC :show="showModal" :onConfirm="confirmDelete" @close="closeModal" />
         </div>
     </div>
 
@@ -148,8 +186,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                     <input type="number" name="user_id" hidden v-model="form.user_id">
                     <div class="col-span-2">
                         <label for="title" class="block mb-2.5 text-sm font-medium text-heading">Título</label>
-                        <input type="text" name="title" id="title"
-                            v-model="form.title"
+                        <input type="text" name="title" id="title" v-model="form.title"
                             class="bg-inputbg text-heading text-sm rounded-sm focus:outline-none block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                             placeholder="Ingresar título..." required>
                     </div>
@@ -157,26 +194,23 @@ const getStatusColor = (status: TasksInterface['status']) => {
                         <label for="description" class="block mb-2.5 text-sm font-medium text-heading">
                             Descripción
                         </label>
-                        <textarea id="description" name="description" rows="4"
-                            v-model="form.description"
+                        <textarea id="description" name="description" rows="4" v-model="form.description"
                             class="block bg-inputbg text-heading text-sm rounded-sm focus:outline-none w-full p-3.5 shadow-xs placeholder:text-body"
                             placeholder="Ingresar descripción..."></textarea>
                     </div>
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="due_date" class="block mb-2.5 text-sm font-medium text-heading">Fecha vencimiento</label>
-                        <input type="date" name="due_date" id="due_date" :min="date"
-                            v-model="form.due_date"
+                        <label for="due_date" class="block mb-2.5 text-sm font-medium text-heading">Fecha
+                            vencimiento</label>
+                        <input type="date" name="due_date" id="due_date" :min="date" v-model="form.due_date"
                             class="bg-inputbg text-heading text-sm rounded-sm focus:outline-none block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
-                            required
-                        >
+                            required>
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="status" class="block mb-2.5 text-sm font-medium text-heading">Estado</label>
-                        <select id="status"
-                            v-model="form.status"
+                        <select id="status" v-model="form.status"
                             class="block w-full px-3 py-2.5 bg-inputbg text-heading text-sm rounded-sm focus:outline-none shadow-xs placeholder:text-body">
                             <option value="" selected>Seleccionar estado</option>
-                            <option v-for="(task,idx) in taskStore.status" :key="idx">{{ task }}</option>
+                            <option v-for="(task, idx) in taskStore.status" :key="idx">{{ task }}</option>
                         </select>
                     </div>
                 </div>
@@ -190,8 +224,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                         </svg>
                         Crear tarea
                     </button>
-                    <button type="button"
-                        @click.prevent="close"
+                    <button type="button" @click.prevent="close"
                         class="text-body bg-secondary box-border hover:bg-secondaryH hover:text-heading focus:outline-none shadow-md font-medium leading-5 rounded-sm text-sm px-4 py-2.5">
                         Cancel
                     </button>
