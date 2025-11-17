@@ -1,7 +1,12 @@
 # laravel
-/backend/vendor/
+/backend/vendor/*
+
 /backend/storage/
-/backend/bootstrap/cache/
+!/backend/storage/**/.gitignore
+
+/backend/bootstrap/cache/*
+!/backend/bootstrap/cache/.gitignore
+
 /backend/.env
 
 # vue3

@@ -46,6 +46,14 @@ php artisan key:generate
 ```
 ---
 
+## 💾 Crear base de datos postgresql
+
+- **DB_CONNECTION**=pgsql
+- **DB_PORT**=5432
+- **DB_DATABASE**=tasks_db
+- **DB_USERNAME**=postgres
+- **DB_PASSWORD**=admin
+
 ```bash
 php artisan migrate --seed
 ```
@@ -60,11 +68,42 @@ php artisan serve
 
 ```bash
 cd ../frontend
+```
+---
 
+### Se puede utilizar npm para la instalación de los paquetes
+```bash
 npm install
-
 npm run dev
 ```
+---
+### Se puede utilizar bun para la instalación de los paquetes
+
+* **Mac/linux**
+```bash
+curl -fsSL https://bun.com/install | bash
+```
+---
+
+* **Windows**
+```bash
+powershell -c "irm bun.sh/install.ps1|iex"
+```
+---
+
+* **Package Managers**
+```bash
+npm install -g bun # the last `npm` command you'll ever need
+```
+---
+```bash
+brew install oven-sh/bun/bun
+```
+---
+```bash
+scoop install bun
+```
+---
 
 ## 🔐 Autenticación
 
@@ -81,16 +120,16 @@ SESSION_DOMAIN=localhost
 ## 👤 Roles disponibles
 
 * **Admin** 
-  — acceso total
-  — email: admin@email.com
-  — password: admin1234
+  - acceso total
+  - email: admin@email.com
+  - password: admin1234
 
 * **Editor** 
-  — puede crear/editar
-  — email: editor@email.com
-  — password: editor1234
+  - puede crear/editar
+  - email: editor@email.com
+  - password: editor1234
 
 * **Viewer** 
-  — solo lectura
-  — email: viwer@email.com
-  — password: viwer1234
+  - solo lectura
+  - email: viwer@email.com
+  - password: viwer1234
