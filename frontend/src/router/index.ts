@@ -4,6 +4,12 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      component: () => import('@/views/auth/loginView.vue'),
+      meta: { requiresGuest: true }
+    },
+    {
       path: '/login',
       name: 'loginView',
       component: () => import('@/views/auth/loginView.vue'),
@@ -16,6 +22,18 @@ const router = createRouter({
       meta: { requiresGuest: true }
     },
     {
+      path: '/profile',
+      name: 'profileView',
+      component: () => import('@/views/auth/ProfileView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboardView',
+      component: () => import('@/views/auth/dashboardView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/tasks',
       name: 'tasksView',
       component: () => import('@/views/tasks/tasksView.vue'),
@@ -25,6 +43,12 @@ const router = createRouter({
       path: '/task/:id/edit',
       name: 'tasksUpdate',
       component: () => import('@/views/tasks/tasksUpdate.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/task/:id',
+      name: 'tasksShow',
+      component: () => import('@/views/tasks/tasksShow.vue'),
       meta: { requiresAuth: true }
     }
   ],
