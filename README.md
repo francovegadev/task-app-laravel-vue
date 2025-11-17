@@ -77,34 +77,42 @@ npm install
 npm run dev
 ```
 ---
-### Se puede utilizar bun para la instalación de los paquetes
 
+### 🧅 Se puede utilizar bun para la instalación de los paquetes (opcional)
+
+## Instalar bun en caso de no tenerlo instalado en su sistema
 * **Mac/linux**
 ```bash
 curl -fsSL https://bun.com/install | bash
 ```
----
 
 * **Windows**
 ```bash
 powershell -c "irm bun.sh/install.ps1|iex"
 ```
----
 
 * **Package Managers**
 ```bash
 npm install -g bun # the last `npm` command you'll ever need
 ```
----
 ```bash
 brew install oven-sh/bun/bun
 ```
----
 ```bash
 scoop install bun
 ```
 ---
-
+### Instar paquetes del frontend con bun
+```bash
+bun install
+bun format
+```
+---
+### Correr frontend
+```bash
+bun dev
+```
+---
 ## 🔐 Autenticación
 
 El backend usa Laravel Sanctum, por lo que debes asegurarte de que:
