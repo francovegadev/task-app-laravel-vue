@@ -23,7 +23,7 @@ todo-app/
 ## 1️⃣ Clonar el repositorio
 
 ```bash
-git clone https://github.com/francovegadev/task-app-laravel-vue.git
+git clone git@github.com:francovegadev/task-app-laravel-vue.git todo-app
 cd todo-app
 ```
 ---
