@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTaskStore } from '@/stores/useTaskStore';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const taskStore = useTaskStore()
@@ -15,6 +15,10 @@ watch(
   async () => await taskStore.getTask(Number(id)),
   { immediate: true }
 )
+
+const today = computed(() => {
+  return new Date().toISOString().split('T')[0]
+})
 
 const update = async () => {
   if (taskStore.task) {
@@ -60,6 +64,7 @@ const redirect = () => {
       </label>
       <input type="date" name="due_date" id="floating_due_date"
         v-model="taskStore.task.due_date"
+        :min="today"
         class="bg-inputbg text-heading text-sm rounded-sm focus:outline-none block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
         placeholder=" " required />
     </div>

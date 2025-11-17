@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTaskStore } from '@/stores/useTaskStore';
 import type { TasksFormInterface } from '@/types/tasks';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const taskStore = useTaskStore()
 
@@ -14,7 +14,7 @@ const props = defineProps<{
 const emit = defineEmits(["update:modelValue", 'submit'])
 
 const internalForm = ref<TasksFormInterface | null>(null)
-// const internalForm = ref(JSON.parse(JSON.stringify(props.modelValue)))
+
 if (props.modelValue) {
   internalForm.value = props.modelValue
 }
@@ -23,7 +23,7 @@ watch(
   () => props.modelValue,
   (value) => {
     if (internalForm.value) {
-      internalForm.value = value
+      internalForm.value = value ?? null
     }
   }
 )
@@ -33,6 +33,10 @@ watch(
   (val) => emit("update:modelValue", val),
   { deep: true }
 )
+
+const today = computed(() => {
+  return new Date().toLocaleDateString("es-ES")?? new Date().toISOString().split('T')[0]
+})
 
 const handleSubmit = () => {
   if (!internalForm.value) return
@@ -78,6 +82,7 @@ const handleSubmit = () => {
       </label>
       <input type="date" name="due_date" id="floating_due_date"
         v-model="internalForm.due_date"
+        :min="today"
         class="block mt-5 py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
         placeholder=" " required />
     </div>
