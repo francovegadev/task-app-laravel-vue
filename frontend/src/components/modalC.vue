@@ -19,7 +19,7 @@ watch(
 </script>
 
 <template>
-<div v-if="isOpen" id="modalC" tabindex="-1" aria-hidden="true" class="overflow-y-auto overflow-x-hidden fixed mt-18 top-10 right-0 left-0 z-50 justify-center items-center w-full max-w-xl mx-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div v-if="isOpen" id="modalC" tabindex="-1" aria-hidden="true" class="overflow-y-auto overflow-x-hidden fixed mt-2 top-10 right-0 left-0 z-50 justify-center items-center w-full max-w-xl mx-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-secondary rounded-base shadow-sm p-4 md:p-6">
             <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">

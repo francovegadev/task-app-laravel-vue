@@ -30,12 +30,24 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get(uri: '/dashboard', action: 'DashboardController@index')->middleware(['auth:sanctum', 'role:admin'])->name('dashboard');
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json([
-        "user" => $request->user(),
-        "roles" => $request->user()->getRoleNames(),
-        "permissions" => $request->user()->getPermissionNames()
-    ]);
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return response()->json([
+//         "user" => $request->user(),
+//         "roles" => $request->user()->getRoleNames(),
+//         "permissions" => $request->user()->getPermissionNames()
+//     ]);
+// });
+
+// users routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get(uri: '/users', action: 'UserController@index')->name('users.index');
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return response()->json([
+            "user" => $request->user(),
+            "roles" => $request->user()->getRoleNames(),
+            "permissions" => $request->user()->getPermissionNames()
+        ]);
+    });
 });
 
 Route::middleware('auth:sanctum')->get('/user/{id}', function (Request $request, int $id) {

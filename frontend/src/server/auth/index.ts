@@ -31,6 +31,15 @@ export const apiGetUser = async () => {
   }
 }
 
+export const apiGetUsers = async () => {
+  try {
+   const res = await api.get('/users') 
+   return res.data
+  } catch (error) {
+   console.error(error); 
+  }
+}
+
 export const apiGetUserById = async (id: number) => {
   try {
    const res = await api.get(`/user/${id}`) 

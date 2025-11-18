@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -61,5 +62,11 @@ class UserController extends BaseController
             return $this->send_success(data: true, message: 'Sesión cerrada correctamente.');
         }
         return $this->send_error(message: "Error al cerrar sesión.");
+    }
+
+    function index() : AnonymousResourceCollection 
+    {
+        $users = User::all();
+        return UserResource::collection($users);     
     }
 }

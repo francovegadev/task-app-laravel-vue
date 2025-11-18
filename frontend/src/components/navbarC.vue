@@ -2,16 +2,36 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { RolesInterface } from "@/types/auth";
 import { storeToRefs } from "pinia";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const auth = useAuthStore()
 const { user } = storeToRefs(auth)
 const rol = ref<RolesInterface>()
 
+const is_admin = computed(() => {
+  if (auth.user?.roles) {
+    return auth.user?.roles[0]?.name === 'admin'
+  }
+  else {
+    return false
+  }
+})
+
+const handleResize = () => {
+  if (window.innerWidth >= 894) {
+    isOpenMenuMobile.value = false
+  }
+}
+
 onMounted(() => {
   if (auth.user?.roles) {
-   rol.value = auth.user.roles[0] 
+    rol.value = auth.user.roles[0]
   }
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 const isOpenMenu = ref(true)
@@ -46,8 +66,8 @@ const logout = async () => {
       <a class="mr-8 text-xl font-sans font-medium" href="#">
         Gestión <span class="text-sky-600 font-medium">Tareas</span>
       </a>
-      <button class="navbar-toggler items-center float-left absolute top-6 left-44 hidden max-lg:block" type="button" aria-controls="navbarColor04"
-        aria-expanded="false" aria-label="Toggle navigation" @click="openMenu">
+      <button class="navbar-toggler items-center float-left absolute top-6 left-44 hidden max-lg:block" type="button"
+        aria-controls="navbarColor04" aria-expanded="false" aria-label="Toggle navigation" @click="openMenu">
         <svg class="w-8 h-8 text-gray-800 outline-borderC focus:border-borderC" aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h14" />
@@ -57,21 +77,16 @@ const logout = async () => {
       <div v-if="isOpenMenu" class="navbar-collapse flex items-center font-sans font-light max-lg:hidden"
         id="navbarColor04">
         <ul class="flex p-0 py-2 me-auto font-semibold font-sans w-full max-lg:w-56">
-          <li class="nav-item" v-if="auth.isLoggedIn && rol && rol.name === 'admin'">
-            <router-link to="/dashboard"
-              v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol?.name)"
+          <li class="nav-item" v-if="auth.isLoggedIn && is_admin">
+            <router-link to="/dashboard" v-if="auth.isLoggedIn && is_admin"
               class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH active"
-              @click="closeMenus"
-            >
+              @click="closeMenus">
               Dashboard
             </router-link>
           </li>
           <li const class="nav-item">
-            <router-link to="/tasks"
-              v-if="auth.isLoggedIn"
-              class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-            >
+            <router-link to="/tasks" v-if="auth.isLoggedIn"
+              class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH" @click="closeMenus">
               Tareas
             </router-link>
           </li>
@@ -85,16 +100,13 @@ const logout = async () => {
           </li> -->
           <li class="nav-item" v-if="!auth.isLoggedIn">
             <router-link to="/login" class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-          >
+              @click="closeMenus">
               Iniciar sesión
             </router-link>
           </li>
           <li class="nav-item" v-if="!auth.isLoggedIn">
             <router-link to="/register"
-              class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-            >
+              class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH" @click="closeMenus">
               Registrarse
             </router-link>
           </li>
@@ -153,51 +165,38 @@ const logout = async () => {
 
       <!-- mobile version nab -->
       <div v-if="isOpenMenuMobile"
-        class="navbar-collapse flex justify-between items-center font-sans font-light max-lg:flex" id="navbarColor04"
+        :class="['navbar-collapse flex justify-between items-center font-sans font-light max-lg:flex', isOpenMenuMobile ? 'block' : 'hidden']" 
+        id="navbarColor04"
       >
         <ul class="flex flex-col px-0 py-6 font-semibold font-sans w-full max-lg:w-56">
           <li class="nav-item py-2 px-0">
-            <router-link to="/dashboard"
-              v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol.name)"
+            <router-link to="/dashboard" v-if="auth.isLoggedIn && is_admin"
               class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH active"
-              @click="closeMenus"
-            >
+              @click="closeMenus">
               Dashboard
             </router-link>
           </li>
           <li const class="nav-item py-2 px-0">
-            <router-link to="/products"
-              v-if="auth.isLoggedIn"
-              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-            >
+            <router-link to="/tasks" v-if="auth.isLoggedIn"
+              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH" @click="closeMenus">
               Tareas
             </router-link>
           </li>
-          <li class="nav-item py-2 px-0" v-if="auth.isLoggedIn">
-            <router-link 
-              v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol.name)"
-              to="/users" 
-              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-            >
+          <!-- <li class="nav-item py-2 px-0" v-if="auth.isLoggedIn">
+            <router-link v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol.name)" to="/users"
+              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH" @click="closeMenus">
               Usuarios
             </router-link>
-          </li>
+          </li> -->
           <li class="nav-item py-2 px-0" v-if="!auth.isLoggedIn">
-            <router-link 
-              to="/login" 
-              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-            >
+            <router-link to="/login" class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH"
+              @click="closeMenus">
               Iniciar sesión
             </router-link>
           </li>
           <li class="nav-item py-1 px-0" v-if="!auth.isLoggedIn">
             <router-link to="/register"
-              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH"
-              @click="closeMenus"
-            >
+              class="nav-link font-sans py-6 px-3 text-navlink-color hover:text-navlink-colorH" @click="closeMenus">
               Registrarse
             </router-link>
           </li>

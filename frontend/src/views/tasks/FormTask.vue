@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useTaskStore } from '@/stores/useTaskStore';
+import { type UserInterface } from '@/types/auth';
 import type { TasksFormInterface } from '@/types/tasks';
 import { computed, ref, watch } from 'vue';
 
 const taskStore = useTaskStore()
+const auth = useAuthStore()
 
 const props = defineProps<{
   buttonName: string,
@@ -14,6 +17,15 @@ const props = defineProps<{
 const emit = defineEmits(["update:modelValue", 'submit'])
 
 const internalForm = ref<TasksFormInterface | null>(null)
+
+const is_admin = computed(() => {
+  console.log(auth.user?.roles?.[0]?.name === 'admin');
+  return auth.user?.roles?.[0]?.name === 'admin' ? true : false
+})
+
+const users = computed<UserInterface[]>(() => {
+  return auth.users
+})
 
 if (props.modelValue) {
   internalForm.value = props.modelValue
@@ -35,7 +47,7 @@ watch(
 )
 
 const today = computed(() => {
-  return new Date().toLocaleDateString("es-ES")?? new Date().toISOString().split('T')[0]
+  return new Date().toLocaleDateString("es-ES") ?? new Date().toISOString().split('T')[0]
 })
 
 const handleSubmit = () => {
@@ -52,13 +64,11 @@ const handleSubmit = () => {
         {{ props.title }}
       </h5>
     </fieldset>
-    <input type="hidden" name="user_id" v-model="internalForm.user_id">
     <div class="relative z-0 w-full mb-5 group">
       <input type="title" name="floating_title" id="floating_title"
         class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-        v-model="internalForm.title"
-        placeholder=" " required />
-        <p class="text-danger text-sm capitalize" v-for="(error, idx) in taskStore.errors" :key="idx">{{ error }}</p>
+        v-model="internalForm.title" placeholder=" " required />
+      <p class="text-danger text-sm capitalize" v-for="(error, idx) in taskStore.errors" :key="idx">{{ error }}</p>
       <label for="floating_title"
         class="absolute text-md font-sans text-body duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
         Título
@@ -67,8 +77,7 @@ const handleSubmit = () => {
     <div class="relative z-0 w-full mb-5 group">
       <textarea name="description" id="description" rows="4"
         class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-        v-model="internalForm.description"
-        placeholder=" " required>
+        v-model="internalForm.description" placeholder=" " required>
       </textarea>
       <label for="description"
         class="absolute text-md font-sans text-body duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
@@ -80,9 +89,7 @@ const handleSubmit = () => {
         class="absolute text-md font-sans text-body duration-300 transform origin-left -translate-y-6 scale-75 top-3 -z-10 peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
         Fecha vencimiento
       </label>
-      <input type="date" name="due_date" id="floating_due_date"
-        v-model="internalForm.due_date"
-        :min="today"
+      <input type="date" name="due_date" id="floating_due_date" v-model="internalForm.due_date" :min="today"
         class="block mt-5 py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
         placeholder=" " required />
     </div>
@@ -92,16 +99,32 @@ const handleSubmit = () => {
           class="absolute text-md font-sans mb-5 text-body duration-300 transform origin-left -translate-y-6 scale-75 top-3 -z-10 peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
           Estado
         </label>
-        <select id="status"
-          v-model="internalForm.status"
+        <select id="status" v-model="internalForm.status"
           class="block w-full px-3 py-2.5 bg-neutral-secondary-medium mt-5 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body">
-          <option selected>Seleccionar estado</option>
-          <option :value="task" v-for="(task,idx) in taskStore.status" :key="idx">
+          <option value="" disabled selected>Seleccionar estado</option>
+          <option :value="task.in_progress" v-for="(task, idx) in taskStore.status" :key="idx">
             {{ task }}
           </option>
         </select>
       </div>
     </div>
+
+    <input type="hidden" name="user_id" v-model="internalForm.user_id">
+    <!-- <div class="flex w-full">
+      <div class="relative z-0 w-full mb-5 group">
+        <label for="status"
+          class="absolute text-md font-sans mb-5 text-body duration-300 transform origin-left -translate-y-6 scale-75 top-3 -z-10 peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+          Asignar a usuario
+        </label>
+        <select id="user_id" name="user_id" v-model="internalForm.user_id"
+          class="block w-full px-3 py-2.5 bg-neutral-secondary-medium mt-5 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body">
+          <option value="" disabled selected>Seleccionar usuario</option>
+          <option :value="user.id" v-for="user in users" :key="user.id">
+            {{ user.name }}
+          </option>
+        </select>
+      </div>
+    </div> -->
 
     <div class="flex gap-4">
       <button type="submit"

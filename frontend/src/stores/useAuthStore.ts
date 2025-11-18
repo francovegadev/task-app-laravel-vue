@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import router from '@/router';
-import { apiGetDashboard, apiGetUser, apiGetUserById, apiLogin, apiLogout, apiRegister } from '@/server/auth';
+import { apiGetDashboard, apiGetUser, apiGetUserById, apiGetUsers, apiLogin, apiLogout, apiRegister } from '@/server/auth';
 import type { LoginFormInterface, RegisterFormInterface, UserInterface } from '@/types/auth';
 import { AxiosError } from 'axios';
 import { defineStore } from 'pinia';
@@ -9,6 +9,7 @@ import { useTaskStore } from './useTaskStore';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<UserInterface | null>(null)
+  const users = ref<UserInterface[]>([])
   const token = ref<string>('')
   const isLoggedIn = ref<boolean>(false)
   const isLoading = ref<boolean>(false)
@@ -61,9 +62,26 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
      const res = await apiGetUser() 
-     user.value = { 'id': res.user.id, 'name': res.user.name, 'email': res.user.email, 'roles': res.user.roles}
+     user.value = { 'id': res.user.id, 'name': res.user.name, 'email': res.user.email, 'roles': res.user.roles, 'permissions': res.user.permissions }
      isLoggedIn.value = true
+     await getUsers()
      router.push('/tasks')
+    } catch (error) {
+     console.error(error); 
+     if (error instanceof AxiosError && error.response?.status === 422) {
+      console.error(error.response.statusText); 
+     }
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  const getUsers = async () => {
+    isLoading.value = true
+    try {
+     const res = await apiGetUsers() 
+     users.value = res.data
     } catch (error) {
      console.error(error); 
      if (error instanceof AxiosError && error.response?.status === 422) {
@@ -137,10 +155,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    users,
     login,
     register,
     logout,
     getUser,
+    getUsers,
     getUserById,
     getDashboardData,
     cleanStore,
@@ -153,7 +173,7 @@ export const useAuthStore = defineStore('auth', () => {
 {
   persist: {
     storage: sessionStorage,
-    pick: ["user", "isLoggedIn", "token"]
+    pick: ["user", "isLoggedIn", "token", "users"]
   }
 }
 )
