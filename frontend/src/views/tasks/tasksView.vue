@@ -3,11 +3,11 @@ import ModalC from '@/components/modalC.vue';
 import ModalDeleteC from '@/components/modalDeleteC.vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTaskStore } from '@/stores/useTaskStore';
-import type { RolesInterface } from '@/types/auth';
+import type { RolesInterface, UserInterface } from '@/types/auth';
 import type { TasksFormInterface, TasksInterface } from '@/types/tasks';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-const completed = ref<boolean>(false)
+// const completed = ref<boolean>(false)
 const searchValue = ref<string>('')
 const selectedStatus = ref('')
 const taskStore = useTaskStore()
@@ -22,6 +22,10 @@ const form = reactive<TasksFormInterface>({
     due_date: '',
     status: '',
     user_id: authStore.user?.id ?? 0
+})
+
+const users = computed<UserInterface[]>(() => {
+  return authStore.users
 })
 
 onMounted(async () => {
@@ -41,13 +45,13 @@ const crear = async (payload: TasksFormInterface) => {
 const filteredData = computed(() => {
     let data = taskStore.tasks || []
     if (searchValue.value) {
-    const search = searchValue.value.toLowerCase()
-    data = data.filter(item =>
-      Object.values(item).some(val =>
-        val?.toString().toLowerCase().includes(search)
-      )
-    )
-  }
+        const search = searchValue.value.toLowerCase()
+        data = data.filter(item =>
+            Object.values(item).some(val =>
+                val?.toString().toLowerCase().includes(search)
+            )
+        )
+    }
 
     if (selectedStatus.value) {
         data = data.filter(item => item.status === selectedStatus.value)
@@ -82,9 +86,9 @@ const confirmDelete = async () => {
     }
 }
 
-const btnCompletedTask = () => {
-    completed.value = !completed.value
-}
+// const btnCompletedTask = () => {
+//     completed.value = !completed.value
+// }
 
 const statusColor = {
     completed: 'text-success',
@@ -115,8 +119,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                 name="searchValue" id="searchValue" v-model="searchValue" placeholder="Buscar tarea.." />
             <label for="selectedStatus" class="text-md font-sans font-semibold">Filtrar por estado</label>
             <select v-model="selectedStatus"
-                class="px-3 py-3 bg-inputbg rounded-sm mb-6 mt-3 w-full border-0 shadow-sm focus-visible:outline-none"
-            >
+                class="px-3 py-3 bg-inputbg rounded-sm mb-6 mt-3 w-full border-0 shadow-sm focus-visible:outline-none">
                 <option value="">Todos</option>
                 <option value="in_progress">En proceso</option>
                 <option value="pending">Pendiente</option>
@@ -231,6 +234,22 @@ const getStatusColor = (status: TasksInterface['status']) => {
                             <option value="" selected>Seleccionar estado</option>
                             <option v-for="(task, idx) in taskStore.status" :key="idx">{{ task }}</option>
                         </select>
+                    </div>
+
+                    <div class="flex w-full">
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="status"
+                                class="block mb-2.5 text-sm font-medium text-heading">
+                                Asignar a usuario
+                            </label>
+                            <select id="user_id" name="user_id" v-model="form.user_id"
+                                class="block w-full px-3 py-2.5 bg-neutral-secondary-medium mt-5 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body">
+                                <option value="" disabled selected>Seleccionar usuario</option>
+                                <option :value="user.id" v-for="user in users" :key="user.id">
+                                    {{ user.name }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
