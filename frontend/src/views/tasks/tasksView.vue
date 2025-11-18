@@ -28,6 +28,11 @@ const users = computed<UserInterface[]>(() => {
   return authStore.users
 })
 
+const is_admin = computed(() => {
+  console.log(authStore.user?.roles?.[0]?.name === 'admin');
+  return authStore.user?.roles?.[0]?.name === 'admin' ? true : false
+})
+
 onMounted(async () => {
     if (authStore.user?.roles) rol.value = authStore.user.roles[0]
     await taskStore.allTasks()
@@ -216,7 +221,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                         <label for="description" class="block mb-2.5 text-sm font-medium text-heading">
                             Descripción
                         </label>
-                        <textarea id="description" name="description" rows="4" v-model="form.description"
+                        <textarea id="description" name="description" rows="2" v-model="form.description"
                             class="block bg-inputbg text-heading text-sm rounded-sm focus:outline-none w-full p-3.5 shadow-xs placeholder:text-body"
                             placeholder="Ingresar descripción..."></textarea>
                     </div>
@@ -236,7 +241,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                         </select>
                     </div>
 
-                    <div class="flex w-full">
+                    <div class="flex w-full" v-if="is_admin">
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="status"
                                 class="block mb-2.5 text-sm font-medium text-heading">
