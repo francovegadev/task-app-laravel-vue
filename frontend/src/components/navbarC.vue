@@ -6,7 +6,6 @@ import { onMounted, ref } from "vue";
 
 const auth = useAuthStore()
 const { user } = storeToRefs(auth)
-const roles = auth.user?.roles
 const rol = ref<RolesInterface>()
 
 onMounted(() => {
@@ -58,7 +57,7 @@ const logout = async () => {
       <div v-if="isOpenMenu" class="navbar-collapse flex items-center font-sans font-light max-lg:hidden"
         id="navbarColor04">
         <ul class="flex p-0 py-2 me-auto font-semibold font-sans w-full max-lg:w-56">
-          <li class="nav-item" v-if="auth.isLoggedIn && roles?.length && roles![0]?.name === 'admin'">
+          <li class="nav-item" v-if="auth.isLoggedIn && rol && rol.name === 'admin'">
             <router-link to="/dashboard"
               v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol?.name)"
               class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH active"
@@ -76,14 +75,14 @@ const logout = async () => {
               Tareas
             </router-link>
           </li>
-          <li class="nav-item" v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol.name)">
+          <!-- <li class="nav-item" v-if="auth.isLoggedIn && rol && !['editor', 'viewer'].includes(rol.name)">
             <router-link to="/users" class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH"
               v-if="auth.isLoggedIn"
               @click="closeMenus"
           >
               Usuarios
             </router-link>
-          </li>
+          </li> -->
           <li class="nav-item" v-if="!auth.isLoggedIn">
             <router-link to="/login" class="nav-link font-sans py-2 px-3 text-navlink-color hover:text-navlink-colorH"
               @click="closeMenus"

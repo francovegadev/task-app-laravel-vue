@@ -9,6 +9,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 const completed = ref<boolean>(false)
 const searchValue = ref<string>('')
+const selectedStatus = ref('')
 const taskStore = useTaskStore()
 const isOpen = ref<boolean>(false)
 const date = `${new Date().getDay()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
@@ -38,39 +39,47 @@ const crear = async (payload: TasksFormInterface) => {
 }
 
 const filteredData = computed(() => {
-    if (!searchValue.value) return taskStore.tasks
-    const search = searchValue.value.toString().toLowerCase()
-    return taskStore.tasks?.filter((item) =>
-        Object.values(item).some((val) =>
-            val.toString().toLowerCase().includes(search)
-        )
+    let data = taskStore.tasks || []
+    if (searchValue.value) {
+    const search = searchValue.value.toLowerCase()
+    data = data.filter(item =>
+      Object.values(item).some(val =>
+        val?.toString().toLowerCase().includes(search)
+      )
     )
+  }
+
+    if (selectedStatus.value) {
+        data = data.filter(item => item.status === selectedStatus.value)
+    }
+
+    return data
 })
 
 // modal config
 const showModal = ref(false)
 const selectedId = ref<number | null>(null)
 
-const deleteRegister = async (id :number | null) => {
-  if (id !== null) {
-    await taskStore.deleteTask(id)
-    closeModal()
-  }
+const deleteRegister = async (id: number | null) => {
+    if (id !== null) {
+        await taskStore.deleteTask(id)
+        closeModal()
+    }
 }
 
 const openModal = (id: number) => {
-  selectedId.value = id
-  showModal.value = true
+    selectedId.value = id
+    showModal.value = true
 }
 
 const closeModal = () => {
-  showModal.value = false
+    showModal.value = false
 }
 
 const confirmDelete = async () => {
-  if (selectedId.value !== null) {
-    await deleteRegister(selectedId.value) 
-  }
+    if (selectedId.value !== null) {
+        await deleteRegister(selectedId.value)
+    }
 }
 
 const btnCompletedTask = () => {
@@ -100,10 +109,19 @@ const getStatusColor = (status: TasksInterface['status']) => {
             Crear tarea
         </button>
         <div class="w-full mx-auto p-6 bg-navbarbg rounded-sm shadow-md">
-            <Label for="searchValue" class="text-md font-sans font-semibold">Filtrar tareas</Label>
+            <label for="searchValue" class="text-md font-sans font-semibold">Filtrar tareas</label>
             <input type="text"
                 class="px-3 py-3 bg-inputbg rounded-sm mb-6 mt-3 w-full border-0 shadow-sm focus-visible:outline-none"
                 name="searchValue" id="searchValue" v-model="searchValue" placeholder="Buscar tarea.." />
+            <label for="selectedStatus" class="text-md font-sans font-semibold">Filtrar por estado</label>
+            <select v-model="selectedStatus"
+                class="px-3 py-3 bg-inputbg rounded-sm mb-6 mt-3 w-full border-0 shadow-sm focus-visible:outline-none"
+            >
+                <option value="">Todos</option>
+                <option value="in_progress">En proceso</option>
+                <option value="pending">Pendiente</option>
+                <option value="completed">Completada</option>
+            </select>
             <h5
                 class="text-xl font-semibold text-heading text-center uppercase bg-primary rounded-sm px-3 py-3 text-secondary mb-6">
                 Listado tareas
@@ -130,7 +148,7 @@ const getStatusColor = (status: TasksInterface['status']) => {
                                 </p>
                             </div>
                             <div class="inline-flex items-center space-x-1">
-                                <button type="button"
+                                <!-- <button type="button"
                                     class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         @click="btnCompletedTask"
@@ -139,10 +157,11 @@ const getStatusColor = (status: TasksInterface['status']) => {
                                         <path fill="currentColor"
                                             d="M0 0v1200h1200V424.289l-196.875 196.875v381.961h-806.25v-806.25h381.961L775.711 0zm1030.008 15.161l-434.18 434.25L440.7 294.283L281.618 453.438L595.821 767.57l159.082-159.082l434.18-434.25l-159.082-159.081z" />
                                     </svg>
-                                </button>
+                                </button> -->
                                 <router-link :to="`/task/${task.id}`"
                                     class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
-                                    <svg class="hover:text-indigo-600 hover:skew-1 transition-colors" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
+                                    <svg class="hover:text-indigo-600 hover:skew-1 transition-colors"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
                                         <path fill="currentColor" fill-rule="evenodd"
                                             d="M1.87 8.515L1.641 8l.229-.515a6.708 6.708 0 0 1 12.26 0l.228.515l-.229.515a6.708 6.708 0 0 1-12.259 0M.5 6.876l-.26.585a1.33 1.33 0 0 0 0 1.079l.26.584a8.208 8.208 0 0 0 15 0l.26-.584a1.33 1.33 0 0 0 0-1.08l-.26-.584a8.208 8.208 0 0 0-15 0M9.5 8a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M11 8a3 3 0 1 1-6 0a3 3 0 0 1 6 0"
                                             clip-rule="evenodd" />
