@@ -1,18 +1,61 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore'
 import type { LoginFormInterface } from '@/types/auth'
-import { reactive } from 'vue'
+import Echo from "laravel-echo"
+import Pusher from "pusher-js"
+import { onMounted, reactive } from 'vue'
 
-const { login } = useAuthStore()
+const authStore = useAuthStore()
+
+window.Pusher = Pusher
+window.Echo.private('App.Models.User.' + authStore.user?.id)
+    .notification((notification: string) => {
+        console.log("Notificación recibida:", notification);
+    });
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: import.meta.env.VITE_PUSHER_APP_KEY,
+  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+  forceTLS: true,
+})
+
+const { login, loginWithGoogle } = useAuthStore()
 const form = reactive<LoginFormInterface>({
   email: '',
   password: ''
 })
+
+onMounted(() => {
+  if (!window.google) {
+    console.error("Google API no cargó")
+    return;
+  }
+
+  /* global google */
+  google.accounts.id.initialize({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
+    callback: handleGoogleResponse
+})
+  google.accounts.id.renderButton(
+    document.getElementById('googleBtn'),
+    { theme: 'outline', size: 'large', width: '900' }
+  )
+})
+
+interface GoogleResponse {
+  credential: string;
+}
+
+const handleGoogleResponse = async (response: GoogleResponse) => {
+  const credential = response.credential
+  await loginWithGoogle(credential)
+}
+
 </script>
 
 <template>
-  <div class="p-4">
-    <form class="max-w-xl mx-auto my-6 px-4 py-6 bg-secondary shadow-lg" @submit.prevent="login(form)">
+  <div class="p-4 max-lg:p-2">
+    <form class="max-w-xl mx-auto my-4 max-lg:my-1 px-4 py-6 bg-secondary shadow-lg" @submit.prevent="login(form)">
       <fieldset>
         <legend class="font-semibold font-sans text-3xl mb-2 w-full bg-primary text-secondary px-3 py-3 text-center rounded-sm">Iniciar sesión</legend>
         <div class="row">
@@ -51,6 +94,8 @@ const form = reactive<LoginFormInterface>({
           <router-link to="/register" class="text-blue-500 hover:text-blue-700">¿No tienes una cuenta? Registrate</router-link>
         </p>
       </fieldset>
+
+      <div id="googleBtn"></div>
     </form>
   </div>
 </template>

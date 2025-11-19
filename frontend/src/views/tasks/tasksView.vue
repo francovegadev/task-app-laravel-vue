@@ -29,7 +29,6 @@ const users = computed<UserInterface[]>(() => {
 })
 
 const is_admin = computed(() => {
-  console.log(authStore.user?.roles?.[0]?.name === 'admin');
   return authStore.user?.roles?.[0]?.name === 'admin' ? true : false
 })
 

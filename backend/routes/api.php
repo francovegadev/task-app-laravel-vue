@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::post(uri: '/login', action: 'UserController@login')->name('login');
 Route::post(uri: '/register', action: 'UserController@register')->name('register');
 Route::post(uri: '/logout', action: 'UserController@logout')->middleware('auth:sanctum')->name('logout');
+
+Route::post(uri: '/auth/google', action: 'GoogleSPAController@googleLogin')->name('auth.google');
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 // tasks routes
 Route::middleware('auth:sanctum')->group(function () {
