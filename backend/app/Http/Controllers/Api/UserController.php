@@ -46,6 +46,8 @@ class UserController extends BaseController
             "password" => Hash::make($request->password),
             200
         ]);
+        $user->assignRole('editor');
+        $user->givePermissionTo('ver tarea');
 
         if ($user) {
             // return $this->send_response(data: $user, message: "Usuario registrado correctamente.");
