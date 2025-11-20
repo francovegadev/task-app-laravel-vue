@@ -54,4 +54,17 @@ const router = createRouter({
   ],
 })
 
+// check user auth
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token')
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return next({ name: 'loginView' })
+  } else if (to.meta.requiresGuest && isAuthenticated) {
+    return next({ name: 'tasksView' })
+  } else {
+    return next()
+  }
+})
+
 export default router

@@ -19,7 +19,6 @@ export const useTaskStore = defineStore('tasks', () => {
     try {
       const res = await apiGetTask(id)
       task.value = res
-      // toast.success('Tarea cargada correctamente.')
     } catch (error) {
       console.error(error);
       toast.error('[Error]: No se pudo encontrar la tarea.')
@@ -35,7 +34,6 @@ export const useTaskStore = defineStore('tasks', () => {
       const res = await apiAllTasks()
       tasks.value = res.data
       await getTaskStatus()
-      // toast.success('Tareas cargadas correctamente.')
     } catch (error) {
       console.error(error);
       toast.error('[Error]: No se pudo cargar las tareas.')
@@ -99,6 +97,7 @@ export const useTaskStore = defineStore('tasks', () => {
   }
 
   const getTaskStatus = async () => {
+    if (status.value?.length) return
     isLoading.value = true
     try {
       const res = await apiGetTaskStatus()

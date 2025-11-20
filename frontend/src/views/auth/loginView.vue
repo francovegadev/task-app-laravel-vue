@@ -1,25 +1,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore'
 import type { LoginFormInterface } from '@/types/auth'
-import Echo from "laravel-echo"
-import Pusher from "pusher-js"
 import { onMounted, reactive } from 'vue'
 
-const authStore = useAuthStore()
-
-window.Pusher = Pusher
-window.Echo.private('App.Models.User.' + authStore.user?.id)
-    .notification((notification: string) => {
-        console.log("Notificación recibida:", notification);
-    });
-window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: import.meta.env.VITE_PUSHER_APP_KEY,
-  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-  forceTLS: true,
-})
-
 const { login, loginWithGoogle } = useAuthStore()
+const auth = useAuthStore()
 const form = reactive<LoginFormInterface>({
   email: '',
   password: ''
@@ -47,6 +32,7 @@ interface GoogleResponse {
 }
 
 const handleGoogleResponse = async (response: GoogleResponse) => {
+  if(auth.isLoggedIn) return
   const credential = response.credential
   await loginWithGoogle(credential)
 }

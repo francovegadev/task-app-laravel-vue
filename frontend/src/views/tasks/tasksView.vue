@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import ModalC from '@/components/modalC.vue';
 import ModalDeleteC from '@/components/modalDeleteC.vue';
+import { getStatusColor } from '@/helpers/getStatusColor';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTaskStore } from '@/stores/useTaskStore';
 import type { RolesInterface, UserInterface } from '@/types/auth';
-import type { TasksFormInterface, TasksInterface } from '@/types/tasks';
+import type { TasksFormInterface } from '@/types/tasks';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-// const completed = ref<boolean>(false)
 const searchValue = ref<string>('')
 const selectedStatus = ref('')
 const taskStore = useTaskStore()
@@ -43,6 +43,7 @@ const open = () => isOpen.value = true
 
 const crear = async (payload: TasksFormInterface) => {
     await taskStore.createTask(payload)
+    cleanForm()
     close()
 }
 
@@ -90,18 +91,12 @@ const confirmDelete = async () => {
     }
 }
 
-// const btnCompletedTask = () => {
-//     completed.value = !completed.value
-// }
-
-const statusColor = {
-    completed: 'text-success',
-    in_progress: 'text-warning',
-    pending: 'text-danger',
-    otro: 'text-faded'
-}
-const getStatusColor = (status: TasksInterface['status']) => {
-    return statusColor[status] ?? 'text-faded'
+const cleanForm = () => {
+    form.title = ''
+    form.description = ''
+    form.due_date = ''
+    form.status = ''
+    form.user_id = authStore.user?.id ?? 0
 }
 
 </script>
@@ -155,16 +150,6 @@ const getStatusColor = (status: TasksInterface['status']) => {
                                 </p>
                             </div>
                             <div class="inline-flex items-center space-x-1">
-                                <!-- <button type="button"
-                                    class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        @click="btnCompletedTask"
-                                        :class="[task.status === 'completed' ? 'text-success' : 'text-faded', 'hover:text-success transition-colors cursor-pointer hover:skew-2']"
-                                        viewBox="0 0 1200 1200">
-                                        <path fill="currentColor"
-                                            d="M0 0v1200h1200V424.289l-196.875 196.875v381.961h-806.25v-806.25h381.961L775.711 0zm1030.008 15.161l-434.18 434.25L440.7 294.283L281.618 453.438L595.821 767.57l159.082-159.082l434.18-434.25l-159.082-159.081z" />
-                                    </svg>
-                                </button> -->
                                 <router-link :to="`/task/${task.id}`"
                                     class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
                                     <svg class="hover:text-indigo-600 hover:skew-1 transition-colors"
