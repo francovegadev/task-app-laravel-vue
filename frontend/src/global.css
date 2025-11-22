@@ -4,31 +4,31 @@ html,
 body {
   box-sizing: border-box;
   font-family:
-    "Nunito Sans",
+    'Nunito Sans',
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
-    "Helvetica Neue",
+    'Helvetica Neue',
     Arial,
     sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol";
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol';
 }
 
 .blockquote-footer::before {
-  content: "— ";
+  content: '— ';
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
   color: rgba(85, 89, 92, 0.75);
-  content: "/";
+  content: '/';
   padding-right: 0.5rem;
   float: left;
 }
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-navbarbg: rgba(248, 249, 250, 1);

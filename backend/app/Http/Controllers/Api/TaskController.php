@@ -31,11 +31,12 @@ class TaskController extends BaseController
     /**
      * get a task
      * @param int|string $id
-     * @return Task|null
+     * @return Task|null|TaskResource
      */
-    function show(int|string $id) : ?Task 
+    function show(int|string $id) : TaskResource 
     {
-       return $this->taskModel->find(id: intval($id)); 
+      //  return $this->taskModel->find(id: intval($id)); 
+       return new TaskResource($this->taskModel->find(id: intval($id))); 
     }
 
     /**

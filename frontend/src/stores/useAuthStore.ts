@@ -15,7 +15,8 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useTaskStore } from './useTaskStore'
 
-export const useAuthStore = defineStore('auth',
+export const useAuthStore = defineStore(
+  'auth',
   () => {
     const user = ref<UserInterface | null>(null)
     const users = ref<UserInterface[]>([])

@@ -19,6 +19,11 @@ class TaskResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'image' => [
+               'path' => $this->when(true, fn() => $this->resource->getTaskImageAttribute()),
+               'url' => $this->image ? $this->image->url() : asset('defaults/taskDefault.jpg')
+            ],
+            // 'image' => ImageResource::collection($this->images),
             'due_date' => Carbon::parse($this->due_date)->format('d-m-Y'),
             'status' => $this->status,
             'user' => new UserResource($this->whenLoaded('user')),

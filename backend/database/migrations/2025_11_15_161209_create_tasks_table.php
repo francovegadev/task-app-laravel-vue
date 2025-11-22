@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
+            // $table->string('image')->default('defaults/taskDefault.jpg')->nullable();
             $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
             $table->date('due_date')->default(date('Y-m-d'));
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');

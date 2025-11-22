@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +26,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'profile',
         'email',
         'password',
     ];
@@ -48,7 +51,20 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    function getUserProfileImageAttribute() {
+      if ($this->image()) {
+        return $this->image()->url();
+      }
+      return asset('defaults/profile.png'); 
+    }
+
     function tasks() : HasMany {
        return $this->hasMany(Task::class, 'user_id'); 
+    }
+
+    function image() : MorphOne 
+    {
+        return $this->morphOne(Image::class, 'imageable');
+        
     }
 }

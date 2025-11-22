@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -37,7 +40,20 @@ class Task extends Model
       'pending'
     ];
 
+    function getTaskImageAttribute() {
+      if ($this->image) {
+        return $this->image->url();
+      }
+      return asset('defaults/taskDefault.jpg'); 
+    }
+
     function user() : BelongsTo {
        return $this->belongsTo(User::class); 
+    }
+
+    function image() : MorphOne
+    {
+      return $this->morphOne(Image::class, 'imageable');
+      
     }
 }

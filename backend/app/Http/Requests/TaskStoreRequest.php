@@ -24,6 +24,7 @@ class TaskStoreRequest extends FormRequest
         return [
             "title" => "required|string",
             "description" => "required|string",
+            "images" => "image|max:4096",
             "due_date" => "required|date",
             "status" => "required|string",
             "user_id" => "required|integer",
