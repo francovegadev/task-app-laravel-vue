@@ -8,11 +8,12 @@ const dash = ref()
 
 onMounted(async () => {
   dash.value = await auth.getDashboardData()
+  console.log(dash.value);
 })
 </script>
 
 <template>
-  <div>
+  <div v-if="dash">
     <TabC>
       <template #dashboard>
         <!-- cantidad de usuarios -->

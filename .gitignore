@@ -1,7 +1,7 @@
 # laravel
 /backend/vendor/*
 
-/backend/storage/
+/backend/storage/*
 !/backend/storage/**/.gitignore
 
 /backend/bootstrap/cache/*
