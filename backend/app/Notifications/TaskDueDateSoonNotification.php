@@ -38,9 +38,9 @@ class TaskDueDateSoonNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -58,12 +58,20 @@ class TaskDueDateSoonNotification extends Notification
         ];
     }
 
-    public function toBroadcast($notifiable) {
-       return new BroadcastMessage([
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
             'task_id' => $this->task->id,
             'title' => $this->task->title,
             'due_date' => $this->task->due_date,
             'message' => 'La tarea "' . $this->task->title . '" vence pronto el ' . Carbon::parse($this->task->due_date)->format('d-m-Y') . '.',
         ]);
+    }
+
+    public function broadcastOn()
+    {
+        return new \Illuminate\Broadcasting\PrivateChannel(
+            'App.Models.User.' . $this->task->user_id
+        );
     }
 }
