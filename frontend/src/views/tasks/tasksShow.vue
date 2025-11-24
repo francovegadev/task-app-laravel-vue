@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { getStatusColor } from '@/helpers/getStatusColor'
 import { useTaskStore } from '@/stores/useTaskStore'
-import type { TasksInterface } from '@/types/tasks'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -14,20 +14,10 @@ watch(
   },
   { immediate: true },
 )
-
-const statusColor = {
-  completed: 'text-success',
-  in_progress: 'text-warning',
-  pending: 'text-danger',
-  otro: 'text-faded',
-}
-const getStatusColor = (status: TasksInterface['status']) => {
-  return statusColor[status] ?? 'text-faded'
-}
 </script>
 
 <template>
-  <section class="bg-neutral-primary" v-if="taskStore.task">
+  <section class="bg-neutral-primary" v-if="taskStore.task && taskStore.task.image?.path">
     <div class="py-8 px-4 mx-auto max-w-screen-2xl text-center lg:py-16">
       <h1 class="mb-6 text-4xl font-bold tracking-tighter text-heading md:text-5xl flex flex-col lg:text-6xl">
         Detalle de la tarea: <span class="text-faded">{{ taskStore.task.title }}</span>
@@ -93,4 +83,10 @@ const getStatusColor = (status: TasksInterface['status']) => {
       </div>
     </div>
   </section>
+  <section v-else>
+  <div class="flex items-center justify-center h-96">
+    <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16">Loading</div>
+  </div>
+  </section>>
 </template>
+

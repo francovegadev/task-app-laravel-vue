@@ -32,9 +32,9 @@ class TaskRepository
   {
     $user = Auth::user();
     if ($user->hasRole('admin')) {
-      return TaskResource::collection(Task::with('user')->orderBy('id', 'asc')->get());
+      return TaskResource::collection(Task::with('user')->orderBy('id', 'asc')->paginate(3));
     }
-    return TaskResource::collection(Task::with('user')->where("user_id", $user->id)->orderBy('id', 'asc')->get());
+    return TaskResource::collection(Task::with('user')->where("user_id", $user->id)->orderBy('id', 'asc')->paginate(3));
   }
 
   /**
@@ -58,6 +58,7 @@ class TaskRepository
   function update(Request $tasks, int $id): Collection | TaskResource
   {
     $task = Task::findOrFail($id);
+    $this->uploadImage(request: $tasks, task: $task);
     $task->update($tasks->all());
 
     return new TaskResource($task);

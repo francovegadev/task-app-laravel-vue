@@ -1,5 +1,4 @@
 import api from '@/lib/axios'
-import type { TasksFormInterface } from '@/types/tasks'
 import { AxiosError } from 'axios'
 
 export const apiGetTaskStatus = async () => {
@@ -20,9 +19,9 @@ export const apiGetTask = async (id: number) => {
   }
 }
 
-export const apiAllTasks = async () => {
+export const apiAllTasks = async (page: number) => {
   try {
-    const res = await api.get('/tasks')
+    const res = await api.get(`/tasks?page=${page}`)
     return res.data
   } catch (error) {
     console.error('[backend]: Error al cargar tareas.', error)
@@ -42,9 +41,11 @@ export const apiCreateTask = async (payload: FormData) => {
   }
 }
 
-export const apiUpdateTask = async (payload: TasksFormInterface, id: number) => {
+export const apiUpdateTask = async (payload: FormData, id: number) => {
   try {
-    const res = await api.put(`/task/${id}`, payload)
+    console.log(payload);
+    payload.append('_method', 'PUT')
+    const res = await api.post(`/task/${id}`, payload, { headers: { 'Content-Type': 'multipart/form-data' }})
     return res.data
   } catch (error) {
     console.error('[backend]: Error al actualizar tarea.', error)
