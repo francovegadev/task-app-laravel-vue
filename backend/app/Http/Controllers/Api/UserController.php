@@ -16,13 +16,19 @@ class UserController extends BaseController
     {
         $request->validate([
             "email" => "required|email",
-            "password" => "required",
+            "password" => "required|min:4",
+        ],
+        [
+            'email.required' => 'El campo email es obligatorio.',
+            'email.email' => 'El campo email debe ser una dirección de correo electrónico válida.',
+            'password.required' => 'El campo contraseña es obligatorio.',
+            'password.min' => 'El campo contraseña debe contener mínimo 4 caracteres.',
         ]);
 
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
-            return $this->send_response(data: [], message: "Error credenciales incorrectas.");
+            return $this->send_error(message: "Error credenciales incorrectas.", code: 422);
         }
         $user = Auth::user();
         $token = $user->createToken('mytoodsecretkeyfvega')->plainTextToken;

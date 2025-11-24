@@ -13,6 +13,7 @@ import type { LoginFormInterface, RegisterFormInterface, UserInterface } from '@
 import { AxiosError } from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useToast } from 'vue-toastification'
 import { useTaskStore } from './useTaskStore'
 
 export const useAuthStore = defineStore(
@@ -23,6 +24,8 @@ export const useAuthStore = defineStore(
     const token = ref<string>('')
     const isLoggedIn = ref<boolean>(false)
     const isLoading = ref<boolean>(false)
+    const errors = ref<ValidationErrors>({})
+    const toast = useToast();
 
     api.interceptors.request.use((config) => {
       if (token.value) {
@@ -30,6 +33,15 @@ export const useAuthStore = defineStore(
       }
       return config
     })
+
+    interface ValidationErrors {
+      [key: string]: string[] | undefined
+    }
+    const clearErrors = (field: string) => {
+      if (errors.value[field]) {
+        errors.value[field] = [] 
+      }
+    }
 
     const login = async (payload: LoginFormInterface) => {
       isLoading.value = true
@@ -39,10 +51,11 @@ export const useAuthStore = defineStore(
         localStorage.setItem('token', token.value)
         isLoggedIn.value = true
         await getUser()
+
       } catch (error) {
-        console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
-          console.error(error.response.statusText)
+          errors.value = error.response.data.errors || { 'message': error.response.data.message }
+          toast.error('[Error de validación] \nPor favor, revisa los campos e inténtalo de nuevo.');
         }
       } finally {
         isLoading.value = false
@@ -59,6 +72,7 @@ export const useAuthStore = defineStore(
         await getUser()
       } catch (error) {
         console.error('Error en login con Google:', error)
+        toast.error('[Error] \nError en login con Google.');
       } finally {
         isLoading.value = false
       }
@@ -72,7 +86,8 @@ export const useAuthStore = defineStore(
       } catch (error) {
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
-          console.error(error.response.statusText)
+          errors.value = error.response.data.errors
+          toast.error('[Error de validación] \nPor favor, revisa los campos e inténtalo de nuevo.');
         }
       } finally {
         isLoading.value = false
@@ -91,12 +106,13 @@ export const useAuthStore = defineStore(
           permissions: res.user.permissions,
         }
         isLoggedIn.value = true
-        await getUsers()
+        if (user.value.roles![0]?.name === 'admin') await getUsers()
         router.push('/tasks')
       } catch (error) {
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
+          toast.error('[Error] \nUsuario no encontrado.');
         }
       } finally {
         isLoading.value = false
@@ -112,6 +128,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
+          toast.error('[Error] \nUsuarios no encontrados.');
         }
       } finally {
         isLoading.value = false
@@ -127,6 +144,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
+          toast.error('[Error] \nUsuario no encontrado.');
         }
       } finally {
         isLoading.value = false
@@ -158,6 +176,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
+          toast.error(`[Error] ${'\n' + error.response.data.message}`);
         }
       } finally {
         isLoading.value = false
@@ -172,6 +191,7 @@ export const useAuthStore = defineStore(
       token.value = ''
       task.tasks = []
       task.task = null
+      errors.value = []
       localStorage.clear()
     }
 
@@ -190,6 +210,8 @@ export const useAuthStore = defineStore(
       isLoading,
       isLoggedIn,
       token,
+      errors,
+      clearErrors,
     }
   },
   {

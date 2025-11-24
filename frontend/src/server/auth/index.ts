@@ -1,34 +1,21 @@
 import api from '@/lib/axios'
 import type { LoginFormInterface, RegisterFormInterface } from '@/types/auth'
-import axios from 'axios'
 
 export const apiLogin = async (payload: LoginFormInterface) => {
-  try {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
-    const res = await api.post('/login', payload)
-    return res.data
-  } catch (error) {
-    console.error(error)
-  }
+  await api.get('/sanctum/csrf-cookie', { withCredentials: true, baseURL: 'http://localhost:8000/' })
+  const res = await api.post('/login', payload)
+  return res.data
 }
 
 export const apiRegister = async (payload: RegisterFormInterface) => {
-  try {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
-    const res = await api.post('/register', payload)
-    return res.data
-  } catch (error) {
-    console.error(error)
-  }
+  await api.get('/sanctum/csrf-cookie', { withCredentials: true, baseURL: 'http://localhost:8000/' })
+  const res = await api.post('/register', payload)
+  return res.data
 }
 
 export const apiGetUser = async () => {
-  try {
-    const res = await api.get('/user')
-    return res.data
-  } catch (error) {
-    console.error(error)
-  }
+  const res = await api.get('/user')
+  return res.data
 }
 
 export const apiGetUsers = async () => {
