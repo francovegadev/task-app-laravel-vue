@@ -24,7 +24,7 @@ onMounted(() => {
   google.accounts.id.renderButton(document.getElementById('googleBtn'), {
     theme: 'outline',
     size: 'large',
-    width: '900',
+    width: '500',
   })
 })
 
@@ -42,15 +42,16 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
 <template>
   <div class="p-4 max-lg:p-2">
     <form
-      class="max-w-xl mx-auto my-4 max-lg:my-1 px-4 py-6 bg-secondary shadow-lg"
-      @submit.prevent="login(form)"
+    class="max-w-xl mx-auto my-2 max-lg:my-1 px-8 py-6 bg-secondary rounded-sm shadow-lg"
+    @submit.prevent="login(form)"
     >
-      <fieldset>
-        <legend
-          class="font-semibold font-sans text-3xl mb-2 w-full bg-primary text-secondary px-3 py-3 text-center rounded-sm"
-        >
-          Iniciar sesión
-        </legend>
+    <fieldset>
+      <legend
+      class="font-semibold font-sans text-3xl mb-2 w-full bg-primary text-secondary px-3 py-3 text-center rounded-sm"
+      >
+      Iniciar sesión
+    </legend>
+      <div v-if="auth.errors.message" class="text-center text-danger font-sans text-lg font-semibold"> {{ auth.errors.message}}</div>
         <div class="row">
           <label
             for="email_login"
@@ -61,11 +62,15 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
           <div class="col-sm-10">
             <input
               type="text"
-              class="block w-full px-3 py-5 text-lg font-light text-a-light-color bg-inputbg border-0 rounded-lg focus:outline-faded"
+              class="block w-full px-3 py-3 text-lg font-light text-a-light-color bg-inputbg border-0 rounded-lg focus:outline-faded"
               id="email_login"
               placeholder="example@email.com"
               v-model="form.email"
+              :aria-invalid="!!auth.errors.email?.[0]"
+              @input="auth.clearErrors('email')"
+              autocomplete="off"
             />
+            <small class="text-danger font-sans" v-if="auth.errors.email?.[0]">{{ auth.errors.email?.[0] }}</small>
           </div>
         </div>
         <div>
@@ -77,12 +82,14 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
           </label>
           <input
             type="password"
-            class="block w-full px-3 py-5 text-lg font-light text-a-light-color bg-inputbg border-0 rounded-lg focus:outline-faded"
+            class="block w-full px-3 py-3 text-lg font-light text-a-light-color bg-inputbg border-0 rounded-lg focus:outline-faded"
             id="password_login"
             placeholder="Password"
             v-model="form.password"
             autocomplete="off"
+            @input="auth.clearErrors('password')"
           />
+          <small class="text-danger font-sans" v-if="auth.errors.password?.[0]">{{ auth.errors.password?.[0] }}</small>
         </div>
 
         <div class="flex items-center justify-start">
@@ -111,7 +118,7 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
         </p>
       </fieldset>
 
-      <div id="googleBtn"></div>
+      <div id="googleBtn" class="mx-auto w-full max-w-sm my-3 max-sm:max-w-[100px]"></div>
     </form>
   </div>
 </template>
