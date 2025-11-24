@@ -8,7 +8,6 @@ const dash = ref()
 
 onMounted(async () => {
   dash.value = await auth.getDashboardData()
-  console.log(dash.value);
 })
 </script>
 
