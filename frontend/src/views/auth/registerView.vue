@@ -10,13 +10,6 @@ const form = reactive<RegisterFormInterface>({
   password_confirmation: '',
 })
 
-// const clearForm = () => {
-//   form.name = '',
-//   form.email = '',
-//   form.password = '',
-//   form.password_confirmation = ''
-// }
-
 const errors = ref({
   name: [],
   email: [],
