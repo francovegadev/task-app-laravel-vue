@@ -7,9 +7,15 @@ const api = axios.create({
   withCredentials: true,
   withXSRFToken: true,
   headers: {
-    Accept: 'application/json',
+    'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
+})
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
 })
 
 api.interceptors.response.use(
@@ -34,6 +40,7 @@ api.interceptors.response.use(
         router.push('/500')
         break
     }
+    return Promise.reject(error)
   },
 )
 
