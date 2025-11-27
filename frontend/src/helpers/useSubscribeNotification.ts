@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import api from "@/lib/axios"
-import type { AxiosError } from "axios"
+import api from '@/lib/axios'
+import type { AxiosError } from 'axios'
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
-import { ref } from "vue"
-import { useToast } from "vue-toastification"
+import { ref } from 'vue'
+import { useToast } from 'vue-toastification'
 
 window.Pusher = Pusher
 window.Echo = new Echo({
@@ -36,12 +36,14 @@ window.Echo = new Echo({
   },
 })
 
-export const upcomingTasks = ref<Array<{ id: number; title: string; due_date: string; message: string }>>([])
+export const upcomingTasks = ref<
+  Array<{ id: number; title: string; due_date: string; message: string }>
+>([])
 interface notification {
-  task_id: number;
-  title: string;
-  due_date: string;
-  message: string;
+  task_id: number
+  title: string
+  due_date: string
+  message: string
 }
 
 export const subscribeToNotifications = (userId: number) => {
@@ -53,7 +55,7 @@ export const subscribeToNotifications = (userId: number) => {
       title: notification.title,
       due_date: notification.due_date,
       message: notification.message,
-    });
-    toast.warning(notification.message);
+    })
+    toast.warning(notification.message)
   })
 }

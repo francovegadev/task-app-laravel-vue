@@ -1,7 +1,7 @@
 import type { UserInterface } from '../auth'
 
 export interface ImageInterface extends File {
-  path?: string,
+  path?: string
   name: string
 }
 
@@ -33,21 +33,21 @@ export interface TasksFormInterface {
 }
 
 export interface LaravelResponseCollectionInterface<T> {
-  data: T[],
+  data: T[]
   links?: {
-    url: string,
-    label: string,
+    url: string
+    label: string
     active: boolean
-  }[],
-  current_page?: number,
-  last_page?: number,
-  per_page?: number,
-  total?: number,
-  from?: number,
-  to?: number,
-  path?: string,
-  first_page_url?: string | null,
-  last_page_url?: string | null,
-  next_page_url?: string | null,
+  }[]
+  current_page?: number
+  last_page?: number
+  per_page?: number
+  total?: number
+  from?: number
+  to?: number
+  path?: string
+  first_page_url?: string | null
+  last_page_url?: string | null
+  next_page_url?: string | null
   prev_page_url?: string | null
 }

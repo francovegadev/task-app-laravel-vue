@@ -27,7 +27,9 @@ onMounted(async () => {
   await getResults()
 })
 
-const getResults = async (page = 1) => { await taskStore.getAllTasksCollection(page) }
+const getResults = async (page = 1) => {
+  await taskStore.getAllTasksCollection(page)
+}
 
 const close = () => (isOpen.value = false)
 const open = () => (isOpen.value = true)
@@ -73,22 +75,33 @@ const openModal = (id: number) => {
   showModal.value = true
 }
 
-const closeModal = () => showModal.value = false
+const closeModal = () => (showModal.value = false)
 
 const confirmDelete = async () => {
   if (selectedId.value !== null) await deleteRegister(selectedId.value)
 }
-
 </script>
 
 <template>
-  <div v-if="!taskStore.isLoading && taskStore.tasks" class="w-full max-w-2xl mx-auto mt-6">
+  <div v-if="!taskStore.isLoading && taskStore.tasksCollection" class="w-full max-w-2xl mx-auto mt-6">
     <!-- crear tarea -->
-    <button type="button" @click.prevent="open" v-if="rol?.name !== 'viewer'"
-      class="flex w-full max-w-48 items-center ml-auto my-6 justify-center uppercase bg-info text-secondary text-center px-3 py-3 box-border border border-transparent cursor-pointer hover:bg-infoH font-medium leading-5 rounded-sm focus:outline-none">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 448 512" class="mx-2">
-        <path fill="currentColor"
-          d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v160H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h160v160c0 17.7 14.3 32 32 32s32-14.3 32-32V288h160c17.7 0 32-14.3 32-32s-14.3-32-32-32H256z" />
+    <button
+      type="button"
+      @click.prevent="open"
+      v-if="rol?.name !== 'viewer'"
+      class="flex w-full max-w-48 items-center ml-auto my-6 justify-center uppercase bg-info text-secondary text-center px-3 py-3 box-border border border-transparent cursor-pointer hover:bg-infoH font-medium leading-5 rounded-sm focus:outline-none"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 448 512"
+        class="mx-2"
+      >
+        <path
+          fill="currentColor"
+          d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v160H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h160v160c0 17.7 14.3 32 32 32s32-14.3 32-32V288h160c17.7 0 32-14.3 32-32s-14.3-32-32-32H256z"
+        />
       </svg>
       Crear tarea
     </button>
@@ -100,66 +113,100 @@ const confirmDelete = async () => {
       <!-- end select status tasks -->
 
       <h5
-        class="text-xl font-semibold text-heading text-center uppercase bg-primary rounded-sm px-3 py-3 text-secondary mb-6">
+        class="text-xl font-semibold text-heading text-center uppercase bg-primary rounded-sm px-3 py-3 text-secondary mb-6"
+      >
         Listado tareas
       </h5>
       <!-- filtered data tasks -->
       <div class="flow-root">
-        <TransitionGroup name="ease-in-out" tag="div" class="transition ease-in-out duration-300 space-y-4">
-          <ListC v-bind:items="filteredData.data">
-            <template #content={item}>
-              <p class="text-sm text-faded font-semibold truncate">
-                {{ item.due_date }}
-              </p>
-              <p class="font-medium text-lg truncate">
-                {{ item.title }}
-              </p>
-              <p class="text-sm text-faded font-semibold truncate">
-                {{ item.description }}
-              </p>
-              <p :class="[
+        <ListC v-bind:items="filteredData.data">
+          <template #content="{ item }">
+            <p class="text-sm text-faded font-semibold truncate">
+              {{ item.due_date }}
+            </p>
+            <p class="font-medium text-lg truncate">
+              {{ item.title }}
+            </p>
+            <p class="text-sm text-faded font-semibold truncate">
+              {{ item.description }}
+            </p>
+            <p
+              :class="[
                 'flex text-sm px-3 py-1 bg-secondary capitalize shadow-sm mt-3 max-w-[120px] rounded-xl text-center font-semibold truncate',
                 getStatusColor(item.status),
-              ]">
-                <span class="text-center mx-auto">{{ item.status }}</span>
-              </p>
-            </template>
-            <template #actions="{item,onView,onEdit}">
-              <router-link :to="`/task/${item.id}`" @click.prevent="onView()"
-                class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
-                <svg class="hover:text-indigo-600 hover:skew-1 transition-colors" xmlns="http://www.w3.org/2000/svg"
-                  width="24" height="24" viewBox="0 0 16 16">
-                  <path fill="currentColor" fill-rule="evenodd"
-                    d="M1.87 8.515L1.641 8l.229-.515a6.708 6.708 0 0 1 12.26 0l.228.515l-.229.515a6.708 6.708 0 0 1-12.259 0M.5 6.876l-.26.585a1.33 1.33 0 0 0 0 1.079l.26.584a8.208 8.208 0 0 0 15 0l.26-.584a1.33 1.33 0 0 0 0-1.08l-.26-.584a8.208 8.208 0 0 0-15 0M9.5 8a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M11 8a3 3 0 1 1-6 0a3 3 0 0 1 6 0"
-                    clip-rule="evenodd" />
-                </svg>
-              </router-link>
-              <router-link :to="`/task/${item.id}/edit`" v-if="rol?.name !== 'viewer'"
-                @click.prevent="onEdit()"
-                class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                  class="hover:text-infoH transition-colors hover:skew-2" viewBox="0 0 512 512">
-                  <path fill="currentColor"
-                    d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L368 46.1l97.9 97.9l24.4-24.4c21.9-21.9 21.9-57.3 0-79.2zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L432 177.9L334.1 80zM96 64c-53 0-96 43-96 96v256c0 53 43 96 96 96h256c53 0 96-43 96-96v-96c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32z" />
-                </svg>
-              </router-link>
-              <button type="button" v-if="rol?.name !== 'viewer'" @click.prevent="openModal(item.id)"
-                class="inline-flex items-center justify-center text-danger bg-transparent box-border border border-transparent cursor-pointer hover:skew-2 font-medium leading-5 rounded-sm h-9 w-9 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 22 22">
-                  <path fill="currentColor"
-                    d="M10 7v9H8V7zm2 0h2v9h-2zM8 2h6v1h5v2h-1v14h-1v1H5v-1H4V5H3V3h5zM6 5v13h10V5z" />
-                </svg>
-                <div id="tooltip1" role="tooltip"
-                  class="absolute invisible z-10 inline-block rounded-xl mb-20 ml-4 px-3 py-2 text-xs leading-4 font-medium text-white transition-opacity duration-300 bg-dark shadow-xs">
-                  Eliminar tarea
-                  <div class="tooltip-arrow" data-popper-arrow></div>
-                </div>
-              </button>
-            </template>
-          </ListC>
-        </TransitionGroup>
-        <TailwindPagination :data="filteredData" @pagination-change-page="getResults"
-          class="bg-inputbg border-gray-100 text-primary" />
+              ]"
+            >
+              <span class="text-center mx-auto">{{ item.status }}</span>
+            </p>
+          </template>
+          <template #actions="{ item, onView, onEdit }">
+            <router-link
+              :to="`/task/${item.id}`"
+              @click.prevent="onView()"
+              class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer"
+            >
+              <svg
+                class="hover:text-indigo-600 hover:skew-1 transition-colors"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  d="M1.87 8.515L1.641 8l.229-.515a6.708 6.708 0 0 1 12.26 0l.228.515l-.229.515a6.708 6.708 0 0 1-12.259 0M.5 6.876l-.26.585a1.33 1.33 0 0 0 0 1.079l.26.584a8.208 8.208 0 0 0 15 0l.26-.584a1.33 1.33 0 0 0 0-1.08l-.26-.584a8.208 8.208 0 0 0-15 0M9.5 8a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M11 8a3 3 0 1 1-6 0a3 3 0 0 1 6 0"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </router-link>
+            <router-link
+              :to="`/task/${item.id}/edit`"
+              v-if="rol?.name !== 'viewer'"
+              @click.prevent="onEdit()"
+              class="box-border hover:text-heading font-medium leading-5 rounded-sm text-xs px-3 py-1.5 focus:outline-none shrink-0 cursor-pointer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                class="hover:text-infoH transition-colors hover:skew-2"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  fill="currentColor"
+                  d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L368 46.1l97.9 97.9l24.4-24.4c21.9-21.9 21.9-57.3 0-79.2zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L432 177.9L334.1 80zM96 64c-53 0-96 43-96 96v256c0 53 43 96 96 96h256c53 0 96-43 96-96v-96c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32z"
+                />
+              </svg>
+            </router-link>
+            <button
+              type="button"
+              v-if="rol?.name !== 'viewer'"
+              @click.prevent="openModal(item.id)"
+              class="inline-flex items-center justify-center text-danger bg-transparent box-border border border-transparent cursor-pointer hover:skew-2 font-medium leading-5 rounded-sm h-9 w-9 focus:outline-none"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 22 22">
+                <path
+                  fill="currentColor"
+                  d="M10 7v9H8V7zm2 0h2v9h-2zM8 2h6v1h5v2h-1v14h-1v1H5v-1H4V5H3V3h5zM6 5v13h10V5z"
+                />
+              </svg>
+              <div
+                id="tooltip1"
+                role="tooltip"
+                class="absolute invisible z-10 inline-block rounded-xl mb-20 ml-4 px-3 py-2 text-xs leading-4 font-medium text-white transition-opacity duration-300 bg-dark shadow-xs"
+              >
+                Eliminar tarea
+                <div class="tooltip-arrow" data-popper-arrow></div>
+              </div>
+            </button>
+          </template>
+        </ListC>
+        <TailwindPagination
+          :data="filteredData"
+          @pagination-change-page="getResults"
+          class="bg-inputbg border-gray-100 text-primary"
+        />
       </div>
       <!-- end filtered data tasks -->
     </div>

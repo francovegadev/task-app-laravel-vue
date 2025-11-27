@@ -1,1 +1,1 @@
-declare module 'laravel-vue-pagination';
+declare module 'laravel-vue-pagination'

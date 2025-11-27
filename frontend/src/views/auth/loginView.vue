@@ -42,16 +42,21 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
 <template>
   <div class="p-4 max-lg:p-2">
     <form
-    class="max-w-xl mx-auto my-2 max-lg:my-1 px-8 py-6 bg-secondary rounded-sm shadow-lg"
-    @submit.prevent="login(form)"
+      class="max-w-xl mx-auto my-2 max-lg:my-1 px-8 py-6 bg-secondary rounded-sm shadow-lg"
+      @submit.prevent="login(form)"
     >
-    <fieldset>
-      <legend
-      class="font-semibold font-sans text-3xl mb-2 w-full bg-primary text-secondary px-3 py-3 text-center rounded-sm"
-      >
-      Iniciar sesión
-    </legend>
-      <div v-if="auth.errors.message" class="text-center text-danger font-sans text-lg font-semibold"> {{ auth.errors.message}}</div>
+      <fieldset>
+        <legend
+          class="font-semibold font-sans text-3xl mb-2 w-full bg-primary text-secondary px-3 py-3 text-center rounded-sm"
+        >
+          Iniciar sesión
+        </legend>
+        <div
+          v-if="auth.errors.message"
+          class="text-center text-danger font-sans text-lg font-semibold"
+        >
+          {{ auth.errors.message }}
+        </div>
         <div class="row">
           <label
             for="email_login"
@@ -70,7 +75,9 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
               @input="auth.clearErrors('email')"
               autocomplete="off"
             />
-            <small class="text-danger font-sans" v-if="auth.errors.email?.[0]">{{ auth.errors.email?.[0] }}</small>
+            <small class="text-danger font-sans" v-if="auth.errors.email?.[0]">{{
+              auth.errors.email?.[0]
+            }}</small>
           </div>
         </div>
         <div>
@@ -89,7 +96,9 @@ const handleGoogleResponse = async (response: GoogleResponse) => {
             autocomplete="off"
             @input="auth.clearErrors('password')"
           />
-          <small class="text-danger font-sans" v-if="auth.errors.password?.[0]">{{ auth.errors.password?.[0] }}</small>
+          <small class="text-danger font-sans" v-if="auth.errors.password?.[0]">{{
+            auth.errors.password?.[0]
+          }}</small>
         </div>
 
         <div class="flex items-center justify-start">
