@@ -160,7 +160,7 @@ const confirmDelete = async () => {
         </TransitionGroup>
         <TailwindPagination :data="filteredData" @pagination-change-page="getResults"
           class="bg-inputbg border-gray-100 text-primary" />
-      </div>
+div      </div>
       <!-- end filtered data tasks -->
     </div>
 
