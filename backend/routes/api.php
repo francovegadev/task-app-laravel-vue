@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\TaskController;
-use App\Http\Controllers\Api\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -33,14 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get(uri: '/dashboard', action: 'DashboardController@index')->middleware(['auth:sanctum', 'role:admin'])->name('dashboard');
 
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return response()->json([
-//         "user" => $request->user(),
-//         "roles" => $request->user()->getRoleNames(),
-//         "permissions" => $request->user()->getPermissionNames()
-//     ]);
-// });
+Route::get(uri: '/filter', action: 'ItemController@filter')->name('item.filter');
+Route::get(uri: '/items', action: 'ItemController@index')->name('item.index');
+Route::get(uri: '/item/{id}', action: 'ItemController@show')->name('item.show');
 
 // users routes
 Route::middleware('auth:sanctum')->group(function () {
