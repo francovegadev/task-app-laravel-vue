@@ -6,7 +6,7 @@ import {
   apiDeleteTask,
   apiGetTask,
   apiGetTaskStatus,
-  apiUpdateTask
+  apiUpdateTask,
 } from '@/server/tasks'
 import {
   type LaravelResponseCollectionInterface,
@@ -44,7 +44,7 @@ export const useTaskStore = defineStore(
       }
     }
 
-    const getAllTasksCollection = async (page: number) : Promise<void> => {
+    const getAllTasksCollection = async (page: number): Promise<void> => {
       isLoading.value = true
       const auth = useAuthStore()
       try {
@@ -79,7 +79,7 @@ export const useTaskStore = defineStore(
     const createTask = async (payload: TasksFormInterface) => {
       isLoading.value = true
       try {
-        const formData = toFormData(payload) 
+        const formData = toFormData(payload)
         await apiCreateTask(formData)
         toast.success('Tarea creada correctamente.')
         await getAllTasksCollection(1)

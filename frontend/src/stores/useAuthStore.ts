@@ -26,7 +26,7 @@ export const useAuthStore = defineStore(
     const isLoggedIn = ref<boolean>(false)
     const isLoading = ref<boolean>(false)
     const errors = ref<ValidationErrors>({})
-    const toast = useToast();
+    const toast = useToast()
 
     api.interceptors.request.use((config) => {
       if (token.value) {
@@ -40,7 +40,7 @@ export const useAuthStore = defineStore(
     }
     const clearErrors = (field: string) => {
       if (errors.value[field]) {
-        errors.value[field] = [] 
+        errors.value[field] = []
       }
     }
 
@@ -52,11 +52,10 @@ export const useAuthStore = defineStore(
         localStorage.setItem('token', token.value)
         isLoggedIn.value = true
         await getUser()
-
       } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 422) {
-          errors.value = error.response.data.errors || { 'message': error.response.data.message }
-          toast.error('[Error de validación] \nPor favor, revisa los campos e inténtalo de nuevo.');
+          errors.value = error.response.data.errors || { message: error.response.data.message }
+          toast.error('[Error de validación] \nPor favor, revisa los campos e inténtalo de nuevo.')
         }
       } finally {
         isLoading.value = false
@@ -73,7 +72,7 @@ export const useAuthStore = defineStore(
         await getUser()
       } catch (error) {
         console.error('Error en login con Google:', error)
-        toast.error('[Error] \nError en login con Google.');
+        toast.error('[Error] \nError en login con Google.')
       } finally {
         isLoading.value = false
       }
@@ -88,7 +87,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           errors.value = error.response.data.errors
-          toast.error('[Error de validación] \nPor favor, revisa los campos e inténtalo de nuevo.');
+          toast.error('[Error de validación] \nPor favor, revisa los campos e inténtalo de nuevo.')
         }
       } finally {
         isLoading.value = false
@@ -113,7 +112,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
-          toast.error('[Error] \nUsuario no encontrado.');
+          toast.error('[Error] \nUsuario no encontrado.')
         }
       } finally {
         isLoading.value = false
@@ -129,7 +128,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
-          toast.error('[Error] \nUsuarios no encontrados.');
+          toast.error('[Error] \nUsuarios no encontrados.')
         }
       } finally {
         isLoading.value = false
@@ -145,7 +144,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
-          toast.error('[Error] \nUsuario no encontrado.');
+          toast.error('[Error] \nUsuario no encontrado.')
         }
       } finally {
         isLoading.value = false
@@ -193,7 +192,7 @@ export const useAuthStore = defineStore(
         console.error(error)
         if (error instanceof AxiosError && error.response?.status === 422) {
           console.error(error.response.statusText)
-          toast.error(`[Error] ${'\n' + error.response.data.message}`);
+          toast.error(`[Error] ${'\n' + error.response.data.message}`)
         }
       } finally {
         isLoading.value = false

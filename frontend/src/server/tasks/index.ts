@@ -30,7 +30,9 @@ export const apiAllTasks = async (page: number) => {
 
 export const apiCreateTask = async (payload: FormData) => {
   try {
-    const res = await api.post('/task', payload, { headers: { 'Content-Type': 'multipart/form-data' }})
+    const res = await api.post('/task', payload, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
     return res.data
   } catch (error) {
     console.error('[backend]: Error al crear tarea.', error)
@@ -43,9 +45,11 @@ export const apiCreateTask = async (payload: FormData) => {
 
 export const apiUpdateTask = async (payload: FormData, id: number) => {
   try {
-    console.log(payload);
+    console.log(payload)
     payload.append('_method', 'PUT')
-    const res = await api.post(`/task/${id}`, payload, { headers: { 'Content-Type': 'multipart/form-data' }})
+    const res = await api.post(`/task/${id}`, payload, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
     return res.data
   } catch (error) {
     console.error('[backend]: Error al actualizar tarea.', error)
