@@ -34,6 +34,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/dashboard/create-user',
+      name: 'DashboardCreateUser',
+      component: () => import('@/views/auth/formCreateUser.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/tasks',
       name: 'tasksView',
       component: () => import('@/views/tasks/tasksView.vue'),

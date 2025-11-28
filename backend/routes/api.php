@@ -52,12 +52,14 @@ Route::middleware('auth:sanctum')->group(function () {
             "permissions" => $request->user()->getPermissionNames()
         ]);
     });
+    Route::post(uri: '/users', action: 'UserController@crearUsuario')->name('users.crearUsuario');
 });
 
 Route::middleware('auth:sanctum')->get('/user/{id}', function (Request $request, int $id) {
     $user = User::find($id);
     return response()->json([
         "user" => $user,
+        "image_url" => $user->image->url(),
         "roles" => $request->user()->getRoleNames(),
         "permissions" => $request->user()->getPermissionNames()
     ]);

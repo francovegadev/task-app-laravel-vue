@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\UserResource;
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -76,5 +77,40 @@ class UserController extends BaseController
     {
         $users = User::all();
         return UserResource::collection($users);     
+    }
+
+    function crearUsuario(Request $request): JsonResponse 
+    {
+        $request->validate([
+            "name" => "required|string",
+            "email" => "required|email|unique:users,email",
+            "password" => "required|confirmed",
+        ]);
+
+        if ($request->hasFile('image')) {
+            $files = $request->file('image');
+            $path = $files->store('profiles', 'public');
+        }
+
+        $user = User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password),
+            200
+        ]);
+        $user->assignRole('editor');
+        $user->syncPermissions(['ver tarea', 'crear tarea', 'editar tarea', 'eliminar tarea']);
+
+        $user->image()->create([
+            'path' => $path,
+            'disk' => 'public'
+        ]);
+
+        if ($user) {
+            return $this->send_response(data: ['user' => new UserResource($user)], message: "Usuario creado correctamente.");
+        }
+
+        return $this->send_error(message: 'Error al intentar crear usuario.');
+        
     }
 }

@@ -1,6 +1,7 @@
 import api from '@/lib/axios'
 import router from '@/router'
 import {
+  apiCreateUser,
   apiGetDashboard,
   apiGetUser,
   apiGetUserById,
@@ -151,6 +152,22 @@ export const useAuthStore = defineStore(
       }
     }
 
+    const create = async (payload: FormData) => {
+      isLoading.value = true
+      try {
+        const res = await apiCreateUser(payload)
+        return res.data
+      } catch (error) {
+        console.error(error)
+        if (error instanceof AxiosError && error.response?.status === 422) {
+          console.error(error.response.statusText)
+          toast.error('[Error] \nNo se pudo crear el usuario.');
+        }
+      } finally {
+        isLoading.value = false
+      }
+    }
+
     const getDashboardData = async () => {
       isLoading.value = true
       try {
@@ -191,7 +208,7 @@ export const useAuthStore = defineStore(
       token.value = ''
       task.tasks = []
       task.task = null
-      errors.value = []
+      errors.value = {}
       localStorage.clear()
     }
 
@@ -209,6 +226,7 @@ export const useAuthStore = defineStore(
       cleanStore,
       isLoading,
       isLoggedIn,
+      create,
       token,
       errors,
       clearErrors,

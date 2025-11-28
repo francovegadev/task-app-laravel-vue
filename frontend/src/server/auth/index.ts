@@ -53,3 +53,8 @@ export const apiLogout = async () => {
     console.error(error)
   }
 }
+
+export const apiCreateUser = async (payload: FormData) => {
+  const res = await api.post('/users', payload, { headers: { 'Content-Type': 'multipart/form-data' }})
+  return res.data
+}

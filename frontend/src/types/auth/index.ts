@@ -11,6 +11,7 @@ export interface UserInterface {
   name: string
   email: string
   password?: string
+  image?: File | null
   roles?: RolesInterface[]
   permissions?: Record<string, any>[]
 }

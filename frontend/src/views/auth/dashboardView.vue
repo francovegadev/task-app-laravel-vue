@@ -13,6 +13,9 @@ onMounted(async () => {
 
 <template>
   <div v-if="dash">
+    <div>
+      <RouterLink :to="{ 'name': 'DashboardCreateUser' }">Crear Usuario</RouterLink>
+    </div>
     <TabC>
       <template #dashboard>
         <!-- cantidad de usuarios -->
